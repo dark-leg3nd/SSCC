@@ -76,7 +76,8 @@ gradient: ['blue', 'magenta']
 })
 
 const BOT_TYPES = [
-  { name: 'SubBot', folder: './Sessions/Subs', starter: startSubBot }
+  { name: 'SubBot',  folder: './Sessions/Subs',  starter: startSubBot },
+  { name: 'PremBot', folder: './Sessions/Prems', starter: startPremBot }
 ]
 
 global.conns = global.conns || []
