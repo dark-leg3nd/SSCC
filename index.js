@@ -23,6 +23,7 @@ import { smsg } from "./lib/message.js";
 import db from "./lib/system/database.js";
 import { startSubBot } from './lib/subs.js';
 import { startPremBot } from './lib/prems.js';
+import { startModBot } from './lib/mods.js';
 import { exec, execSync } from "child_process";
 
 const log = {
@@ -77,7 +78,8 @@ gradient: ['blue', 'magenta']
 
 const BOT_TYPES = [
   { name: 'SubBot',  folder: './Sessions/Subs',  starter: startSubBot },
-  { name: 'PremBot', folder: './Sessions/Prems', starter: startPremBot }
+  { name: 'PremBot', folder: './Sessions/Prems', starter: startPremBot },
+  { name: 'ModBot',  folder: './Sessions/Mods',  starter: startModBot }
 ]
 
 global.conns = global.conns || []
