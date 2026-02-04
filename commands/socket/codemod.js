@@ -7,6 +7,12 @@ export default {
   category: 'socket',
 
   run: async (client, m, args) => {
+    const userData = global.db.data.users[m.sender] || {}
+
+    // ⭐ PERMISOS REALES
+    if (!m.isOwner && !userData.isMod) return
+    // 👆 NO reply → handler muestra "comando no existe"
+
     commandFlags[m.sender] = true
 
     const phone = args[0]
