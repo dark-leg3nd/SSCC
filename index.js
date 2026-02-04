@@ -22,7 +22,7 @@ import readline from "readline";
 import { smsg } from "./lib/message.js";
 import db from "./lib/system/database.js";
 import { startSubBot } from './lib/subs.js';
-import { startPremBot } from './lib/prem.js';
+import { startPremBot } from './lib/prems.js';
 import { exec, execSync } from "child_process";
 
 const log = {
