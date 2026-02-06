@@ -14,10 +14,30 @@ export default {
 
   run: async (client, m, args, command) => {
 
-    const user = global.db.data.users[m.sender]
-    if (!user) return
+    const db = global.db.data
+    const chatId = m.chat
+    const chatData = db.chats[chatId]
 
-    /* ========= COOLDOWN ========= */
+    if (!chatData) return
+
+    const user = chatData.users[m.sender]
+    if (!user) return m.reply('❌ No estás registrado.')
+
+    /* =========================
+       💰 COSTO
+    ========================= */
+
+    const COST = 200000
+
+    if (!user.coins) user.coins = 0
+
+    if (user.coins < COST)
+      return m.reply(`❌ Necesitas *¥${COST.toLocaleString()} Coins* para vincular un Premium-Bot.`)
+
+    /* =========================
+       ⏳ COOLDOWN
+    ========================= */
+
     let time = user.Prem + 120000 || 0
 
     if (new Date() - user.Prem < 120000) {
@@ -28,7 +48,10 @@ export default {
       )
     }
 
-    /* ========= LIMITE DE BOTS ========= */
+    /* =========================
+       📂 LIMITE
+    ========================= */
+
     const premsPath = path.join(dirname, '../../Sessions/Prems')
 
     const count = fs.existsSync(premsPath)
@@ -39,23 +62,29 @@ export default {
 
     const maxPrems = 20
 
-    if (count >= maxPrems) {
-      return client.reply(
-        m.chat,
-        '❌ No hay espacios disponibles para más Premium-Bots.',
-        m
-      )
-    }
+    if (count >= maxPrems)
+      return m.reply('❌ No hay espacios disponibles para más Premium-Bots.')
 
-    /* ========= BANDERA ========= */
+    /* =========================
+       💸 DESCONTAR COINS (AQUÍ)
+    ========================= */
+
+    user.coins -= COST
+
+    await m.reply(
+      `💸 Se descontaron *¥${COST.toLocaleString()} Coins*\nRestante: *¥${user.coins.toLocaleString()}*`
+    )
+
+    /* =========================
+       🚩 BANDERA
+    ========================= */
+
     commandFlags[m.sender] = true
 
-    /* ========= NUMERO ========= */
     const phone = args[0]
       ? args[0].replace(/\D/g, '')
       : m.sender.split('@')[0]
 
-    /* ========= MENSAJE ========= */
     const caption =
 `✦ Vinculación PREMIUM ✦
 
@@ -64,21 +93,17 @@ Sigue estos pasos:
 ✦ Vincular dispositivo
 ✦ Con número telefónico
 
-✦ Obtendrás funciones PREMIUM`
+⭐ Obtendrás funciones PREMIUM`
 
-    const isCode = true
-    const isCommand = true
-
-    /* ========= INICIAR PREMIUM ========= */
     await startPremBot(
       m,
       client,
       caption,
-      isCode,
+      true,
       phone,
       m.chat,
       commandFlags,
-      isCommand
+      true
     )
 
     user.Prem = Date.now()
@@ -86,7 +111,7 @@ Sigue estos pasos:
 }
 
 
-/* ========= UTILS ========= */
+/* ================= UTIL ================= */
 
 function msToTime(duration) {
   var seconds = Math.floor((duration / 1000) % 60)
